@@ -1,0 +1,22 @@
+{
+  "name": "@extension/index",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tailwindcss -i index.css -o out/index.css && esbuild --bundle --minify --platform=browser --outfile=out/index.js index.tsx"
+  },
+  "dependencies": {
+    "@extension/share": "0.0.0",
+    "@radix-ui/react-scroll-area": "^1.0.3",
+    "clsx": "^1.2.1",
+    "jotai": "^2.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-markdown": "^8.0.7"
+  },
+  "devDependencies": {
+    "@extension/tsconfig": "0.0.0",
+    "@types/react": "^18.2.7",
+    "@types/react-dom": "^18.2.4"
+  }
+}

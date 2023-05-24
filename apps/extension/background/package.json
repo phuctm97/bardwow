@@ -1,0 +1,18 @@
+{
+  "name": "@extension/background",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "esbuild --bundle --minify --platform=browser --conditions=worker --outfile=out/index.js index.ts"
+  },
+  "dependencies": {
+    "@extension/share": "0.0.0",
+    "rehype-parse": "^8.0.4",
+    "rehype-remark": "^9.1.2",
+    "remark-stringify": "^10.0.3",
+    "unified": "^10.1.2"
+  },
+  "devDependencies": {
+    "@extension/tsconfig": "0.0.0"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Bard Wow!",
+  "description": "Save & share Bard conversations. Discover & use Bard prompts. Enhance Bard with more features. It's free & open-source.",
+  "version": "0.0.0",
+  "background": { "service_worker": "background.js" },
+  "options_page": "index.html",
+  "content_scripts": [
+    { "matches": ["https://bard.google.com/"], "js": ["content.js"] }
+  ],
+  "permissions": ["storage"]
+}

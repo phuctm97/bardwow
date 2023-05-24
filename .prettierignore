@@ -1,0 +1,17 @@
+# apps
+.next
+next-env.d.ts
+out
+
+# dependencies
+node_modules
+
+# debug
+npm-debug.log*
+
+# env
+.env*
+
+# misc
+.DS_Store
+*.pem
