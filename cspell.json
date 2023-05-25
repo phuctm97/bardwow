@@ -15,6 +15,7 @@
     "rcompare",
     "rehype",
     "tailwindcss",
-    "twconfig"
+    "twconfig",
+    "unist"
   ]
 }
