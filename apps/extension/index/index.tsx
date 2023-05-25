@@ -10,7 +10,7 @@ import {
   ScrollAreaViewport,
 } from "@radix-ui/react-scroll-area";
 import { clsx } from "clsx";
-import { atom, Provider, useAtom, useAtomValue } from "jotai";
+import { atom, Provider, useAtom, useAtomValue, useSetAtom } from "jotai";
 import { atomFamily } from "jotai/utils";
 import { Suspense, useCallback } from "react";
 import { createRoot } from "react-dom/client";
@@ -31,6 +31,36 @@ const chatTitleAtomFamily = atomFamily<string, Atom<Promise<string>>>((id) =>
     return chat?.messages[0]?.content ?? "Untitled";
   })
 );
+
+const chatIdAtom = atom<string | undefined>(undefined);
+
+const chatIdsWritableAtom = atom<string[] | undefined>(undefined);
+
+async function chatIdsRead(): Promise<string[]> {
+  const items = await chrome.storage.local.get(null);
+  return Object.keys(items)
+    .filter((key) => key.startsWith(CHAT_STORAGE_PREFIX))
+    .map((key) => key.substring(CHAT_STORAGE_PREFIX.length));
+}
+
+const chatIdsAtom = atom<string[] | Promise<string[]>, [string[]], void>(
+  (get) => {
+    const writableValue = get(chatIdsWritableAtom);
+    if (writableValue) return writableValue;
+    return chatIdsRead();
+  },
+  (get, set, value) => set(chatIdsWritableAtom, value)
+);
+
+const deleteChatAtom = atom(null, async (get, set, id: string) => {
+  set(chatIdAtom, (chatId) => (chatId === id ? undefined : chatId));
+  const chatIds = await get(chatIdsAtom);
+  set(
+    chatIdsAtom,
+    chatIds.filter((chatId) => chatId !== id)
+  );
+  await chrome.storage.local.remove(`${CHAT_STORAGE_PREFIX}${id}`);
+});
 
 type ChatMessageComponentProps = ChatMessage;
 
@@ -60,6 +90,10 @@ interface ChatComponentProps {
 
 const ChatComponent: FC<ChatComponentProps> = ({ id }) => {
   const chat = useAtomValue(chatAtomFamily(id));
+  const deleteChat = useSetAtom(deleteChatAtom);
+  const handleDeleteChat = useCallback(() => {
+    deleteChat(id).catch(console.error);
+  }, [id, deleteChat]);
   if (!chat) return <ChatBlank />;
   return (
     <ScrollArea className="scroll-area flex-1">
@@ -70,6 +104,14 @@ const ChatComponent: FC<ChatComponentProps> = ({ id }) => {
               <ChatMessageComponent key={index} {...message} />
             ))}
           </ul>
+          <div className="flex w-full flex-row items-center justify-start overflow-hidden border-t border-gray-200 px-8 py-6">
+            <button
+              className="rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+              onClick={handleDeleteChat}
+            >
+              Delete chat
+            </button>
+          </div>
         </main>
       </ScrollAreaViewport>
       <ScrollAreaScrollbar
@@ -81,8 +123,6 @@ const ChatComponent: FC<ChatComponentProps> = ({ id }) => {
     </ScrollArea>
   );
 };
-
-const chatIdAtom = atom<string | undefined>(undefined);
 
 const ChatMain: FC = () => {
   const chatId = useAtomValue(chatIdAtom);
@@ -111,13 +151,6 @@ const ChatListItem: FC<ChatListItemProps> = ({ id }) => {
     </li>
   );
 };
-
-const chatIdsAtom = atom(async () => {
-  const items = await chrome.storage.local.get(null);
-  return Object.keys(items)
-    .filter((key) => key.startsWith(CHAT_STORAGE_PREFIX))
-    .map((key) => key.substring(CHAT_STORAGE_PREFIX.length));
-});
 
 const ChatList: FC = () => {
   const chatIds = useAtomValue(chatIdsAtom);
