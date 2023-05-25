@@ -35,7 +35,7 @@ _Bard Wow!_ is an open-source Chrome extension that enhance [Bard](https://bard.
 
 - Discover best Bard prompts from the community (soon)
 
-- Create & save your Bard prompts
+- Create & save your Bard prompts (soon)
 
 ## How To Use
 

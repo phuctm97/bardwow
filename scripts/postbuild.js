@@ -23,6 +23,11 @@ fs.copyFileSync(
   path.resolve(extensionDir, "content", "out", "index.js"),
   path.resolve(outDir, "content.js")
 );
+for (const size of [16, 32, 48, 128])
+  fs.copyFileSync(
+    path.resolve(rootDir, "assets", `icon${size}.png`),
+    path.resolve(outDir, `icon${size}.png`)
+  );
 const manifestJson = require(path.resolve(extensionDir, "manifest.json"));
 manifestJson.version = process.env.APP_VERSION || "1.0.0";
 fs.writeFileSync(

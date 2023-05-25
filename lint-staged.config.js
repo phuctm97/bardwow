@@ -7,19 +7,19 @@ const jsExtensions = ["js", "mjs", "cjs", "jsx"];
 
 const tsExtensions = jsExtensions.map((ext) => ext.replace("js", "ts"));
 
-const lintExtensions = [...tsExtensions, ...jsExtensions];
+const esExtensions = [...tsExtensions, ...jsExtensions];
 
-const lintPatterns = `*.{${lintExtensions.join(",")}}`;
+const esPatterns = `*.{${esExtensions.join(",")}}`;
 
-const lintCommands = [
+const esCommands = [
   "eslint --fix --no-error-on-unmatched-pattern",
   ...defaultCommands,
 ];
 
 /** @type {import('lint-staged').Config} */
 const config = {
-  [`!${lintPatterns}`]: defaultCommands,
-  [lintPatterns]: lintCommands,
+  [`!${esPatterns}`]: defaultCommands,
+  [esPatterns]: esCommands,
 };
 
 module.exports = config;
